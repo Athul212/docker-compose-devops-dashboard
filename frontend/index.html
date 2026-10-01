@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps Learning Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+        }
+
+        h1 {
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .topics {
+            display: grid;
+            gap: 15px;
+        }
+
+        .topic {
+            padding: 18px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .completed {
+            color: green;
+        }
+
+        .learning {
+            color: orange;
+        }
+
+        .upcoming {
+            color: #777;
+        }
+
+        .footer {
+            margin-top: 30px;
+            color: #777;
+            font-size: 14px;
+        }
+
+        .loading {
+            color: #666;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🚀 DevOps Learning Dashboard</h1>
+
+    <p class="subtitle">
+        A multi-container application running with Docker Compose
+    </p>
+
+    <div id="topics" class="topics">
+        <p class="loading">Loading topics...</p>
+    </div>
+
+    <div class="footer">
+        Running with Nginx + Flask + PostgreSQL + Docker Compose
+    </div>
+
+</div>
+
+<script>
+    async function loadTopics() {
+        const topicsContainer = document.getElementById("topics");
+
+        try {
+            const response = await fetch("/api/topics");
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch topics");
+            }
+
+            const topics = await response.json();
+
+            topicsContainer.innerHTML = "";
+
+            topics.forEach(item => {
+
+                const topic = document.createElement("div");
+                topic.className = "topic";
+
+                let statusClass = "";
+
+                if (item.status === "Completed") {
+                    statusClass = "completed";
+                } else if (item.status === "Learning") {
+                    statusClass = "learning";
+                } else {
+                    statusClass = "upcoming";
+                }
+
+                topic.innerHTML = `
+                    <span>${item.topic}</span>
+                    <span class="status ${statusClass}">
+                        ${item.status}
+                    </span>
+                `;
+
+                topicsContainer.appendChild(topic);
+            });
+
+        } catch (error) {
+            topicsContainer.innerHTML =
+                '<p class="error">Unable to load topics from the API.</p>';
+
+            console.error(error);
+        }
+    }
+
+    loadTopics();
+</script>
+
+</body>
+</html>
